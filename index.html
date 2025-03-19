@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог товаров VIM</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+        
+        /* Стили для аккордеона */
+        .accordion {
+            margin-bottom: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background-color: #c0392b;
+        }
+        
+        .accordion-content {
+            display: none;
+            padding: 0 15px;
+            background-color: #f9f9f9;
+            overflow: hidden;
+        }
+        
+        .accordion-content.active {
+            display: block;
+        }
+        
+        .sub-accordion {
+            margin: 10px 0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .sub-accordion-header {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .sub-accordion-header:hover {
+            background-color: #2980b9;
+        }
+        
+        .sub-accordion-content {
+            display: none;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-left: 3px solid #3498db;
+        }
+        
+        .sub-accordion-content.active {
+            display: block;
+        }
+        
+        .items span {
+            display: inline-block;
+            background-color: #fff;
+            margin: 5px;
+            padding: 5px 10px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+        
+        .accordion-icon, .sub-accordion-icon {
+            transition: transform 0.3s;
+        }
+        
+        .rotate {
+            transform: rotate(180deg);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .updates-section {
+            max-width: 1200px;
+            margin: 0 auto 20px auto;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+        }
+        
+        .updates-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        
+        .updates-header i {
+            margin-right: 10px;
+            color: #3498db;
+            font-size: 1.2em;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-right: 10px;
+        }
+        
+        .date-badge {
+            color: #7f8c8d;
+            font-size: 0.85em;
+            font-weight: normal;
+        }
+        
+        .updates-content {
+            margin-left: 25px;
+        }
+        
+        .update-item {
+            margin-bottom: 5px;
+            display: flex;
+        }
+        
+        .update-category {
+            color: #2980b9;
+            font-weight: 500;
+        }
+        
+        .update-subcategory {
+            color: #3498db;
+            margin: 0 5px;
+        }
+        
+        /* Стили для иконок (FontAwesome) */
+        .fa {
+            font-family: 'FontAwesome', sans-serif;
+            display: inline-block;
+            font-style: normal;
+            font-variant: normal;
+            text-rendering: auto;
+            line-height: 1;
+        }
+        
+        /* Collapse/expand функционал */
+        .updates-toggle {
+            background-color: transparent;
+            border: none;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            cursor: pointer;
+            float: right;
+            padding: 5px;
+        }
+        
+        .updates-toggle:hover {
+            color: #2c3e50;
+        }
+        
+        .collapsed .updates-content {
+            display: none;
+        }
+        
+        .collapsed .expand-text {
+            display: inline;
+        }
+        
+        .collapsed .collapse-text {
+            display: none;
+        }
+        
+        .expand-text {
+            display: none;
+        }
+    </style>
+<!-- Подключение FontAwesome для иконок -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <!-- Секция обновлений -->
+    <div class="updates-section" id="updatesSection">
+        <div class="updates-header">
+            <i class="fas fa-sync-alt"></i>
+            Обновления
+            <button class="updates-toggle" onclick="toggleUpdates()">
+                <span class="collapse-text">Свернуть</span>
+                <span class="expand-text">Развернуть</span>
+            </button>
+        </div>
+        <div class="updates-content">
+            <div class="update-version">
+                <span class="version-badge">v1.0.1</span>
+                <span class="date-badge">19 марта 2025</span>
+            </div>
+            <div class="update-items">
+                <div class="update-item">
+                    <i class="fas fa-plus" style="color: #27ae60; margin-right: 8px;"></i>
+                    <span class="update-category">Освещение</span> →
+                    <span class="update-subcategory">Настенные светильники</span> →
+                    <span class="update-item-name">Инсталляция</span>
+                </div>
+                <div class="update-item">
+                    <i class="fas fa-plus" style="color: #27ae60; margin-right: 8px;"></i>
+                    <span class="update-category">Освещение</span> →
+                    <span class="update-subcategory">Потолочные светильники</span> →
+                    <span class="update-item-name">Закарнизная подсветка</span>
+                </div>
+                <div class="update-item">
+                    <i class="fas fa-plus" style="color: #27ae60; margin-right: 8px;"></i>
+                    <span class="update-category">Освещение</span> →
+                    <span class="update-subcategory">Потолочные светильники</span> →
+                    <span class="update-item-name">Светодиодная лента</span>
+                </div>
+                <div class="update-item">
+                    <i class="fas fa-plus" style="color: #27ae60; margin-right: 8px;"></i>
+                    <span class="update-category">Освещение</span> →
+                    <span class="update-subcategory">Напольные светильники</span> →
+                    <span class="update-item-name">Подсветка плинтуса</span>
+                </div>
+                <div class="update-item">
+                    <i class="fas fa-plus" style="color: #27ae60; margin-right: 8px;"></i>
+                    <span class="update-category">Освещение</span> →
+                    <span class="update-subcategory">Настольные светильники</span> →
+                    <span class="update-item-name">Подсветка рабочей зоны</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Каталог товаров VIM</h1>
+
+        <!-- Архитектура -->
+        <div class="accordion">
+            <div class="accordion-header">
+                Архитектура
+                <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Двери
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Межкомнатные двери</span>
+                            <span>Входные двери</span>
+                            <span>Раздвижные двери</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Окна
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Пластиковые окна</span>
+                            <span>Деревянные окна</span>
+                            <span>Подоконники</span>
+                            <span>Колонны</span>
+                            <span>Террасы</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Конструкции
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Камины</span>
+                            <span>Перегородки</span>
+                            <span>Лестницы</span>
+                        </div>
+                    </div>
+                </div>
+                               
+                
+
+            </div>
+        </div>       
+        
+        <!-- Мебель -->
+        <div class="accordion">
+            <div class="accordion-header">
+                Мебель
+                <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Кровати
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Односпальные</span>
+                            <span>Двуспальные</span>
+                            <span>Детские кровати</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Диваны и кресла
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Модульные диваны</span>
+                            <span>Угловые диваны</span>
+                            <span>Прямые диваны</span>
+                            <span>Кушетки</span>
+                            <span>Кресла</span>
+                            <span>Пуфы</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Шкафы и стеллажи
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Гардеробные системы</span>
+                            <span>Шкафы-купе</span>
+                            <span>Распашные шкафы</span>
+                            <span>Стеллажи</span>
+                            <span>Полки</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Столы и стулья
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Обеденные столы</span>
+                            <span>Обеденные стулья</span>
+                            <span>Компьютерные столы</span>
+                            <span>Компьютерные кресла и стулья</span>
+                            <span>Журнальные столы</span>
+                            <span>Приставные столики</span>
+                            <span>Туалетные столики</span>
+                            <span>Барные стулья</span>
+                            <span>Мягкие стулья</span>
+                            <span>Детские столы</span>
+                            <span>Детские стулья и кресла</span>
+                            <span>Пеленальный столик</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Тумбы и комоды
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Тумбы для ТВ</span>
+                            <span>Комоды</span>
+                            <span>Прикроватные тумбы</span>
+                            <span>Тумбы для обуви</span>
+                            <span>Тумбы для детской</span>
+                            <span>Офисные тумбы</span>
+                            <span>Тумбы для ванной</span>
+                            <span>Ящики для игрушек</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Мебель для ванной
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Тумба под раковину</span>
+                            <span>Напольный шкаф (пенал)</span>
+                            <span>Зеркальный шкаф</span>
+                            <span>Полки</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Кухонная мебель
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Кухонные шкафы напольные</span>
+                            <span>Кухонные шкафы навесные</span>
+                            <span>Кухонные шкафы угловые</span>
+                            <span>Кухонные пеналы</span>
+                            <span>Кухонные острова</span>
+                            <span>Столешницы</span>
+                            <span>Мойки</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- Сантехника -->
+        <div class="accordion">
+            <div class="accordion-header">
+                Сантехника
+                <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Ванны и душевые кабины
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Стандартные ванны</span>
+                            <span>Джакузи</span>
+                            <span>Душевые кабины</span>
+                            <span>Душевые поддоны</span>
+                            <span>Душевые уголки</span>
+                            <span>Душевая шторка</span>
+                        </div>
+                    </div>
+                </div>
+                
+            
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Унитазы и биде
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Унитазы напольные</span>
+                            <span>Унитазы навесные</span>
+                            <span>Биде</span>
+                            <span>Крышка биде</span>
+                            <span>Писсуары</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Раковины
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Раковина моноблок</span>
+                            <span>Раковина накладная</span>
+                            <span>Раковина подвесная</span>
+                            <span>Раковина на стиральную машину</span>
+                            <span>Умывальник</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Смесители
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Смесители для ванны</span>
+                            <span>Смесители для душа</span>
+                            <span>Смесители для раковины</span>
+                            <span>Смесители для кухни</span>
+                            <span>Смесители для биде</span>
+                            <span>Термостатические смесители</span>
+                            <span>Встраиваемые смесители</span>
+                            <span>Сенсорные смесители</span>
+                        </div>
+                    </div>
+                </div>
+
+                               
+            </div>
+        </div>
+        
+        
+        <!-- Освещение -->
+        <div class="accordion">
+            <div class="accordion-header">
+                Освещение
+                <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Потолочные светильники
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Люстры</span>
+                            <span>Точечные светильники</span>
+                            <span>Подвесные светильники</span>
+                            <span>Трекинговые системы</span>
+                            <span>Светодиодная лента</span>
+                            <span>Закарнизная подсветка</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Настенные светильники
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Бра</span>
+                            <span>Инсталляция</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Напольные светильники
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Торшеры</span>
+                            <span>Подсветка плинтуса</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Настольные светильники
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Настольные лампы</span>
+                            <span>Декоративные светильники</span>
+                            <span>Подсветка рабочей зоны</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Техника -->
+        <div class="accordion">
+            <div class="accordion-header">
+                Техника
+                <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Климатическая техника
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Кондиционеры</span>
+                            <span>Вентиляторы</span>
+                            <span>Обогреватели</span>
+                            <span>Очистители воздуха</span>
+                            <span>Увлажнители воздуха</span>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Бытовая техника
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Стиральные машины</span>
+                            <span>Сушильные машины</span>
+                            <span>Робот-пылесосы</span>
+                            <span>Бойлеры</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Мультимедиа
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Телевизоры</span>
+                            <span>Проекторы</span>
+                            <span>Аудиосистемы</span>
+                            <span>Умные колонки</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Крупная кухонная техника
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Холодильники</span>
+                            <span>Морозильные камеры</span>
+                            <span>Плиты</span>
+                            <span>Варочные панели</span>
+                            <span>Духовые шкафы</span>
+                            <span>Вытяжки</span>
+                            <span>Микроволновые печи</span>
+                            <span>Посудомоечные машины</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Мелкая кухонная техника
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Кухонные комбайны</span>
+                            <span>Кофеварки / кофемашины</span>
+                            <span>Мультиварки</span>
+                            <span>Хлебопечки</span>
+                            <span>Электрические чайники</span>
+                            <span>Электрические мясорубки</span>
+                            <span>Соковыжималки</span>
+                            <span>Тостеры</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Декор -->
+        <div class="accordion">
+            <div class="accordion-header">
+                Декор
+                <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Текстиль
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Шторы и гардины</span>
+                            <span>Ковры</span>
+                            <span>Подушки</span>
+                            <span>Пледы</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Настенный декор
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Картины</span>
+                            <span>Фотографии</span>
+                            <span>Панно</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Зеркала
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Настенные зеркала</span>
+                            <span>Напольные зеркала</span>
+                            <span>Декоративные зеркала</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Аксессуары
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Вазы</span>
+                            <span>Статуэтки</span>
+                            <span>Часы</span>
+                            <span>Свечи</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Быт
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Гладильная доска</span>
+                            <span>Утюги</span>
+                            <span>Отпариватели</span>
+                            <span>Фены и стайлеры</span>
+                            <span>Плойки и выпрямители</span>
+                            <span>Бритвы и триммеры</span>
+                            <span>Машинки для стрижки</span>
+                            <span>Электрические зубные щетки</span>
+                            <span>Весы напольные</span>
+                            <span>Увлажнители воздуха</span>
+                            <span>Сушилки для белья</span>
+                            <span>Швейные машины</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- Отделка -->
+        <div class="accordion">
+            <div class="accordion-header">
+                Отделка (для 3D режима)
+                <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Напольные покрытия
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Паркет</span>
+                            <span>Ламинат</span>
+                            <span>Плитка</span>
+                            <span>Линолеум</span>
+                            <span>Ковролин</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Стены
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Обои</span>
+                            <span>Краска</span>
+                            <span>Декоративная штукатурка</span>
+                            <span>Панели</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Потолок
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Натяжные потолки</span>
+                            <span>Подвесные потолки</span>
+                            <span>Гипсокартонные конструкции</span>
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+        </div>
+        
+        <!-- Инженерные системы -->
+        <div class="accordion">
+            <div class="accordion-header">
+                Инженерные системы
+                <span class="accordion-icon">▼</span>
+            </div>
+            <div class="accordion-content">
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Отопление
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Радиаторы</span>
+                            <span>Теплые полы</span>
+                            <span>Термостаты</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Водоснабжение и канализация
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Фильтры</span>
+                            <span>Счетчики</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Вентиляция
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Воздуховоды</span>
+                            <span>Вентиляционные решетки</span>
+                            <span>Вентиляторы</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sub-accordion">
+                    <div class="sub-accordion-header">
+                        Электрика
+                        <span class="sub-accordion-icon">▼</span>
+                    </div>
+                    <div class="sub-accordion-content">
+                        <div class="items">
+                            <span>Розетки</span>
+                            <span>Выключатели</span>
+                            <span>Домофоны</span>
+                            <span>Системы безопасности</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2025 VIM</p>
+        </footer>
+    </div>
+    <script>
+        function toggleUpdates() {
+            const updatesSection = document.getElementById('updatesSection');
+            updatesSection.classList.toggle('collapsed');
+        }
+    </script>
+    
+    <script>
+        // JavaScript для управления аккордеоном
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработчик для главных категорий
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const icon = this.querySelector('.accordion-icon');
+                    
+                    // Переключение класса активности
+                    content.classList.toggle('active');
+                    icon.classList.toggle('rotate');
+                    
+                    // Открываем/закрываем содержимое
+                    if (content.classList.contains('active')) {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Обработчик для подкатегорий
+            const subAccordionHeaders = document.querySelectorAll('.sub-accordion-header');
+            subAccordionHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const icon = this.querySelector('.sub-accordion-icon');
+                    
+                    // Переключение класса активности
+                    content.classList.toggle('active');
+                    icon.classList.toggle('rotate');
+                    
+                    // Открываем/закрываем содержимое
+                    if (content.classList.contains('active')) {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
